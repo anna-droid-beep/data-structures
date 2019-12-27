@@ -103,7 +103,7 @@ class TestDoublyLinkedList(unittest.TestCase):
                 self.assertEqual(list.size, expected_size)
 
     def test_peekFirst_isEmpty_raisesError(self):
-        self.assertRaises(IndexError, self.init_list.peek_first)
+        self.assertRaises(LookupError, self.init_list.peek_first)
 
     def test_peekFirst_notEmpty_success(self):
         list_cases = [(self.single_node_list, "single"),
@@ -116,7 +116,7 @@ class TestDoublyLinkedList(unittest.TestCase):
                 self.assertEqual(actual_head, expected_head)
 
     def test_peekLast_isEmpty_raisesError(self):
-        self.assertRaises(IndexError, self.init_list.peek_last)
+        self.assertRaises(LookupError, self.init_list.peek_last)
 
     def test_peekLast_notEmpty_success(self):
         list_cases = [(self.single_node_list, "single"),
@@ -199,3 +199,58 @@ class TestDoublyLinkedList(unittest.TestCase):
             with self.subTest(list=str(list), lookup_value=lookup_value, expected_contain=expected_contain):
                 actual_contain = list.contains(lookup_value)
                 self.assertEqual(actual_contain, expected_contain)
+
+    def test_integration(self):
+        l = DoublyLinkedList()
+        self.assertTrue(l.is_empty())
+
+        l.add(5)
+        self.assertTrue(l.contains(5))
+        self.assertEqual(l.peek_first(), 5)
+        self.assertEqual(l.peek_last(), 5)
+
+        l.add(4)
+        self.assertEqual(l.peek_first(), 5)
+        self.assertEqual(l.peek_last(), 4)
+
+        l.add(10)
+        self.assertEqual(l.peek_first(), 5)
+        self.assertEqual(l.peek_last(), 10)
+
+        l.add(8)
+        l.add(4)
+
+        l.add_first(1)
+        self.assertEqual(l.peek_first(), 1)
+        self.assertEqual(l.peek_last(), 4)
+
+        # linked_list 1 5 4 10 8 4
+
+        removed_1 = l.remove(4)
+        self.assertTrue(removed_1)
+
+        removed_2 = l.remove(4)
+        self.assertTrue(removed_2)
+
+        unremoved = l.remove(4)
+        self.assertFalse(unremoved)
+
+        first = l.remove_first()
+        self.assertEqual(first, 1)
+
+        last = l.remove_last()
+        self.assertEqual(last, 8)
+
+        # linked_list 5 10
+
+        removed_3 = l.remove_at(1)
+        removed_4 = l.remove_at(0)
+
+        self.assertEqual(removed_3, 10)
+        self.assertEqual(removed_4, 5)
+
+        self.assertRaises(LookupError, l.peek_first)
+        self.assertRaises(LookupError, l.peek_last)
+        self.assertRaises(IndexError, l.remove_at, 0)
+        self.assertRaises(LookupError, l.remove_last)
+        self.assertRaises(LookupError, l.remove_first)
