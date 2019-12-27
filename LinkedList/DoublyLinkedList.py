@@ -1,5 +1,5 @@
 class Node:
-    def __init__(self, data, previous, next):
+    def __init__(self, data, previous=None, next=None):
         self.data = data
         self.previous = previous
         self.next = next
@@ -69,7 +69,7 @@ class DoublyLinkedList:
         if self.is_empty():
             self.tail = None
         else:
-            self.head.prev = None
+            self.head.previous = None
         return data
 
     def remove_last(self):
@@ -98,10 +98,9 @@ class DoublyLinkedList:
         return data
 
     def remove_at(self, index):
-        if index < 0 or index > self.size:
+        if index < 0 or index >= self.size:
             raise IndexError("Index should be an integer greater than 0 and smaller than {}. Was {}".format(self.size,
                                                                                                             index))
-
         if index < self.size/2:
             trav = self.head
             for i in range(index):
@@ -123,7 +122,7 @@ class DoublyLinkedList:
         else:
             while trav is not None:
                 if trav.data == value:
-                    self.remove(trav)
+                    self.__remove(trav)
                     return True
                 trav = trav.next
         return False
