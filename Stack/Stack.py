@@ -25,4 +25,4 @@ class Stack:
         return self.get_size() == 0
 
     def __str__(self):
-        return str(self.list.reverse())
+        return str(self.list)
