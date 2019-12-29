@@ -8,9 +8,9 @@ class BinaryHeap:
         # internal capacity of the heap
         self.capacity = capacity
 
-        if array is None:
-            self.array = []
-        else:
+        self.array = []
+
+        if array is not None:
             self.array = array
 
         self._position = {}
