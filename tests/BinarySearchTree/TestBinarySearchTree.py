@@ -2,7 +2,6 @@ import unittest
 from BinarySearchTree.BinarySearchTree import BinarySearchTree, Node
 from BinarySearchTree.TreeTraversalOrder import TreeTraversalOrder
 
-
 class MockBST:
 
     def __init__(self):
