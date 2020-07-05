@@ -5,7 +5,7 @@ class Node:
         self.next = next
 
     def __str__(self):
-        print(self.data)
+        return (str(self.data))
 
 
 class DoublyLinkedList:
@@ -146,6 +146,20 @@ class DoublyLinkedList:
 
     def contains(self, value):
         return self.index_of(value) != -1
+    
+    def moves_to_head(self, node):
+        if node is self.head:
+            return
+        node.previous.next = node.next
+        if node is self.tail:
+            self.tail = node.previous
+        else:
+            node.next.previous = node.previous
+        
+        self.head.previous = node
+        node.next = self.head
+        node.previous = None
+        self.head = node
 
     def __str__(self):
         trav = self.head
