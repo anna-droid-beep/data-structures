@@ -13,6 +13,7 @@ class TestDoublyLinkedList(unittest.TestCase):
         self.single_node_list.tail = single_node
         self.single_node_list.size = 1
 
+        # 4 <-> 5
         self.head_tail_list = DoublyLinkedList()
         head_tail_node1 = Node(data=4, previous=None, next=None)
         head_tail_node2 = Node(data=5, previous=None, next=None)
@@ -22,6 +23,7 @@ class TestDoublyLinkedList(unittest.TestCase):
         self.head_tail_list.tail = head_tail_node2
         self.head_tail_list.size = 2
 
+        # 6 <-> None <-> 1
         self.standard_list = DoublyLinkedList()
         standard_head = Node(data=6, previous=None, next=None)
         standard_middle = Node(data=None, previous=None, next=None)
@@ -199,6 +201,15 @@ class TestDoublyLinkedList(unittest.TestCase):
             with self.subTest(list=str(list), lookup_value=lookup_value, expected_contain=expected_contain):
                 actual_contain = list.contains(lookup_value)
                 self.assertEqual(actual_contain, expected_contain)
+
+    def test_moves_to_head(self):
+        test_cases = [(self.single_node_list, self.single_node_list.head, "single"), 
+                      (self.head_tail_list, self.head_tail_list.tail, "5, 4")]
+        
+        for list, node, expected in test_cases:
+            with self.subTest(list=str(list), node=str(node), expected=expected):
+                list.moves_to_head(node)
+                self.assertEqual(str(list), expected)
 
     def test_integration(self):
         l = DoublyLinkedList()
