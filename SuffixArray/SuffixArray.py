@@ -20,15 +20,8 @@ def buildSuffixArray(S):
         tuples, mx = buildTuples(suffixPosition, i)
         suffixPosition = radixSort(tuples, mx)
 
-    sa = suffixPositionToSuffixArray(suffixPosition, S)
+    sa = toSuffixString(suffixPosition, S)
     return sa
-
-
-def forLoop(start, condition, evolve):
-    value = start
-    while (condition(value)):
-        yield value
-        value = evolve(value)
 
 
 def buildTuples(substring, ln):
@@ -44,6 +37,14 @@ def buildTuples(substring, ln):
         substrings.append(Substring((firstSubstring, secondSubstring), i))
         mx = max(mx, firstSubstring, secondSubstring)
     return substrings, mx
+
+
+def radixSort(substrings, maxPos):
+    firstDigitSorted = countingSort(substrings, digit=1, lenCounter=maxPos)
+    secondDigitSorted = countingSort(
+        firstDigitSorted, digit=0, lenCounter=maxPos)
+    ans = normalizeTuples(secondDigitSorted)
+    return ans
 
 
 def countingSort(substrings, digit, lenCounter):
@@ -63,18 +64,10 @@ def countingSort(substrings, digit, lenCounter):
     return ans
 
 
-def radixSort(substrings, maxPos):
-    firstDigitSorted = countingSort(substrings, digit=1, lenCounter=maxPos)
-    secondDigitSorted = countingSort(
-        firstDigitSorted, digit=0, lenCounter=maxPos)
-    ans = normalizeTuples(secondDigitSorted)
-    return ans
-
-
 def normalizeTuples(tuples):
     """
-    Assign to each tuple its position in its sorted array
-    [([1,0],3), ([1,0], 0), ([1,2], 1), ([2,0], 2), ([2,3], 4)]
+    Assign each Substring's index to its order position.
+    [([1,0], 3), ([1,0], 0), ([1,2], 1), ([2,0], 2), ([2,3], 4)]
          0           1           2          3           4
     => [1, 2, 3, 1, 4]
     """
@@ -90,8 +83,15 @@ def normalizeTuples(tuples):
     return ans
 
 
-def suffixPositionToSuffixArray(suffixPosition, str):
+def toSuffixString(suffixPosition, str):
     sa = [0]*len(suffixPosition)
     for i in range(len(sa)):
         sa[suffixPosition[i]-1] = str[i:]
     return sa
+
+
+def forLoop(start, condition, evolve):
+    value = start
+    while (condition(value)):
+        yield value
+        value = evolve(value)
