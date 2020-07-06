@@ -1,6 +1,9 @@
+from math import floor, log, inf
+
+
 class Substring:
-    def __init__(self, tuple=tuple(), index=-1):
-        self.tuple = tuple
+    def __init__(self, t=tuple(), index=-1):
+        self.tuple = t
         self.index = index
 
     def __str__(self):
@@ -11,28 +14,44 @@ class Substring:
 
 
 def buildSuffixArray(S):
-    nums = [ord(s)-96 for s in S]
+    suffixPosition = [ord(s)-96 for s in S]
+    P = floor(log(len(S)))
+    for i in forLoop(1, lambda i: i <= (1 << P), lambda i: i << 1):
+        tuples, mx = buildTuples(suffixPosition, i)
+        suffixPosition = radixSort(tuples, mx)
+
+    sa = suffixPositionToSuffixArray(suffixPosition, S)
+    return sa
+
+
+def forLoop(start, condition, evolve):
+    value = start
+    while (condition(value)):
+        yield value
+        value = evolve(value)
 
 
 def buildTuples(substring, ln):
     substrings = []
     n = len(substring)
+    mx = -inf
     for i in range(n):
         firstSubstring = substring[i]
-        if i + ln < n:
+        if (i + ln) < n:
             secondSubstring = substring[i+ln]
         else:
             secondSubstring = 0
         substrings.append(Substring((firstSubstring, secondSubstring), i))
-    return substrings
+        mx = max(mx, firstSubstring, secondSubstring)
+    return substrings, mx
 
 
-def countingSort(substrings, digit):
-    counter = [0]*27
+def countingSort(substrings, digit, lenCounter):
+    counter = [0]*(lenCounter+1)
     for substring in substrings:
         counter[substring.tuple[digit]] += 1
 
-    for i in range(1, 27):
+    for i in range(1, lenCounter+1):
         counter[i] = counter[i] + counter[i-1]
 
     ans = [0]*len(substrings)
@@ -44,31 +63,35 @@ def countingSort(substrings, digit):
     return ans
 
 
-def radixSort(substrings):
-    firstDigitSorted = countingSort(substrings, digit=1)
-    secondDigitSorted = countingSort(firstDigitSorted, digit=0)
-    ans = [0]*len(secondDigitSorted)
-    i = 1
-    pos = 0
-    new_val = secondDigitSorted[0].tuple
-    for i in range(len(ans)):
-        if new_val != secondDigitSorted[i].tuple:
-            new_val = secondDigitSorted[i].tuple
-            pos += 1
-        ans[secondDigitSorted[i].index] = pos
+def radixSort(substrings, maxPos):
+    firstDigitSorted = countingSort(substrings, digit=1, lenCounter=maxPos)
+    secondDigitSorted = countingSort(
+        firstDigitSorted, digit=0, lenCounter=maxPos)
+    ans = normalizeTuples(secondDigitSorted)
     return ans
 
 
-init = [4, 3, 2, 1, 1, 2, 1, 2, 1]
-res = buildTuples(init, 1)
-print(res)
-res = radixSort(res)
-print(res)
-res = buildTuples(res, 2)
-print(res)
-res = radixSort(res)
-print(res)
-res = buildTuples(res, 4)
-print(res)
-res = radixSort(res)
-print(res)
+def normalizeTuples(tuples):
+    """
+    Assign to each tuple its position in its sorted array
+    [([1,0],3), ([1,0], 0), ([1,2], 1), ([2,0], 2), ([2,3], 4)]
+         0           1           2          3           4
+    => [1, 2, 3, 1, 4]
+    """
+    ans = [0]*len(tuples)
+    i = 1
+    pos = 1
+    new_val = tuples[0].tuple
+    for i in range(len(ans)):
+        if new_val != tuples[i].tuple:
+            new_val = tuples[i].tuple
+            pos += 1
+        ans[tuples[i].index] = pos
+    return ans
+
+
+def suffixPositionToSuffixArray(suffixPosition, str):
+    sa = [0]*len(suffixPosition)
+    for i in range(len(sa)):
+        sa[suffixPosition[i]-1] = str[i:]
+    return sa
