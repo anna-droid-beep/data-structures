@@ -1,18 +1,6 @@
 from math import floor, log, inf
 
 
-class Substring:
-    def __init__(self, t=tuple(), index=-1):
-        self.tuple = t
-        self.index = index
-
-    def __str__(self):
-        return "([{},{}],{})".format(self.tuple[0], self.tuple[1], self.index)
-
-    def __repr__(self):
-        return str(self)
-
-
 def buildSuffixArray(S):
     suffixPosition = [ord(s)-96 for s in S]
     P = floor(log(len(S)))
@@ -95,3 +83,15 @@ def forLoop(start, condition, evolve):
     while (condition(value)):
         yield value
         value = evolve(value)
+
+
+class Substring:
+    def __init__(self, t=tuple(), index=-1):
+        self.tuple = t
+        self.index = index
+
+    def __str__(self):
+        return "([{},{}],{})".format(self.tuple[0], self.tuple[1], self.index)
+
+    def __repr__(self):
+        return str(self)
