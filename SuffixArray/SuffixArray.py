@@ -12,6 +12,18 @@ def buildSuffixArray(S):
     return sa
 
 
+def buildCompressedSuffixArray(S):
+    suffixPosition = [ord(s)-96 for s in S]
+    P = floor(log(len(S)))
+    for i in forLoop(1, lambda i: i <= (1 << P), lambda i: i << 1):
+        tuples, mx = buildTuples(suffixPosition, i)
+        suffixPosition = radixSort(tuples, mx)
+
+    sa = toCompressedSuffix(suffixPosition, S)
+
+    return sa
+
+
 def buildTuples(substring, ln):
     substrings = []
     n = len(substring)
@@ -78,11 +90,52 @@ def toSuffixString(suffixPosition, str):
     return sa
 
 
+def toCompressedSuffix(suffixPosition, str):
+    sa = [0]*len(suffixPosition)
+    for i in range(len(sa)):
+        sa[suffixPosition[i]-1] = i
+    return sa
+
+
 def forLoop(start, condition, evolve):
     value = start
     while (condition(value)):
         yield value
         value = evolve(value)
+
+
+def buildLCPArray(suffixArray, string):
+    """
+    suffixArray[rank] = S[i:]
+    inv[S[i:]] = rank
+
+    for compression purposes, S[i:] is replaced i.
+    """
+    n = len(string)
+    inv = buildInvTable(suffixArray)
+    LCPArray = [0]*n
+    lcp = 0
+    for i in range(len(string)):
+        if inv[i] == n-1:
+            lcp = 0
+            continue
+        j = suffixArray[inv[i]+1]
+        while (i+lcp < n and j+lcp < n and string[i+lcp] == string[j+lcp]):
+            lcp += 1
+
+        LCPArray[inv[i]] = lcp
+
+        if lcp > 0:
+            lcp -= 1
+
+    return LCPArray
+
+
+def buildInvTable(suffixArray):
+    inv = [0] * len(suffixArray)
+    for i, s in enumerate(suffixArray):
+        inv[s] = i
+    return inv
 
 
 class Substring:
