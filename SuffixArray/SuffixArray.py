@@ -1,5 +1,7 @@
 from math import floor, log, inf
 
+# Refer to https://www.youtube.com/watch?v=_TUeAdu-U_k for the Suffix Array Construction
+# Refer to https://www.youtube.com/watch?v=XiuSW_mEn7g for the Radix Sort algorithm
 
 def buildSuffixArray(S):
     suffixPosition = [ord(s)-96 for s in S]
